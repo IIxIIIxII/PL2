@@ -16,7 +16,7 @@ const Header = () => {
         }} >
             <h1>Мой сайт</h1>
             <button onClick={() => dispatch(toggleTheme())} >
-                тема
+                {theme === 'light' ? '☀️' : '🌙'}
             </button>
 
 
