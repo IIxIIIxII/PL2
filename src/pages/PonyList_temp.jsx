@@ -1,18 +1,51 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPonies, createPony, deletePony } from "../features/ponies/poniesSlice";
+import { fetchPonies, createPony, deletePony } 
+from "../features/ponies/poniesSlice";
 import { useNavigate } from "react-router-dom";
 
 const PonyList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const { items, status, error } = useSelector(state => state.ponies);
 
-  const [form, setForm] = useState({ name: '', type: '', description: '', price: '' });
+  const [form, setForm] = useState({
+    name: "",
+    type: "",
+    description: "",
+    price: ""
+  });
 
   useEffect(() => {
     dispatch(fetchPonies());
   }, [dispatch]);
+
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    dispatch(createPony({
+      id: Date.now(),
+      name: form.name,
+      type: form.type,
+      description: form.description,
+      price: form.price
+    }));
+
+    setForm({
+      name: "",
+      type: "",
+      description: "",
+      price: ""
+    });
+  };
 
   if (status === "loading") return <p>Загрузка...</p>;
   if (error) return <p>Ошибка: {error}</p>;
@@ -20,25 +53,51 @@ const PonyList = () => {
   return (
     <div className="container">
       <h2>Пони</h2>
-      <div style={{marginBottom:20}}>
-        <h3>Добавить пони</h3>
-        <input placeholder="Имя" value={form.name} onChange={(e)=>setForm({...form,name:e.target.value})} />
-        <input placeholder="Тип" value={form.type} onChange={(e)=>setForm({...form,type:e.target.value})} />
-        <input placeholder="Описание" value={form.description} onChange={(e)=>setForm({...form,description:e.target.value})} />
-        <input placeholder="Цена" value={form.price} onChange={(e)=>setForm({...form,price:e.target.value})} />
-        <button onClick={async ()=>{
-          if(!form.name) return;
-          await dispatch(createPony({...form, price: form.price}));
-          setForm({ name: '', type: '', description: '', price: '' });
-        }}>Добавить</button>
-      </div>
+
+      <h3>Добавить пони</h3>
+
+      <form onSubmit={handleSubmit}>
+        <input
+          name="name"
+          placeholder="Название"
+          value={form.name}
+          onChange={handleChange}
+        />
+
+        <input
+          name="type"
+          placeholder="Тип"
+          value={form.type}
+          onChange={handleChange}
+        />
+
+        <input
+          name="description"
+          placeholder="Описание"
+          value={form.description}
+          onChange={handleChange}
+        />
+
+        <input
+          name="price"
+          placeholder="Цена"
+          value={form.price}
+          onChange={handleChange}
+        />
+
+        <button type="submit">Добавить</button>
+      </form>
+
       <ul>
-        {items.map(pony => (
-          <li key={pony.id}>
-            <button onClick={() => navigate(`/ponies/${pony.id}`)}>
-              {pony.name}
+        {items.map(inst => (
+          <li key={inst.id}>
+            <button onClick={() => navigate(`/ponies/${inst.id}`)}>
+              {inst.name}
             </button>
-            <button style={{marginLeft:8}} onClick={async ()=>{ await dispatch(deletePony(pony.id)); }}>Удалить</button>
+
+            <button onClick={() => dispatch(deletePony(inst.id))}>
+              Удалить
+            </button>
           </li>
         ))}
       </ul>

@@ -1,24 +1,25 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import Home from "./pages/Home";
-import PonyList from "./pages/PonyList_temp";
-import PonyDetail from "./pages/PonyDetail_temp";
-import { Routes, Route } from "react-router-dom";
+import PonyList from "./pages/PonyList_temp.jsx";
+import PonyDetail from "./pages/PonyDetail_temp.jsx";
+import Counter from "./pages/Counter.jsx";
+function App() {
+  return (
+    <BrowserRouter>
+  <Header />
+  
+  <Routes>
+    <Route path="/" element={<PonyList />} />
+    <Route path="/ponies/:id" element={<PonyDetail />} />
+    <Route path="/counter" element={<Counter />}  />
+  </Routes>
+  
+  <Footer />
+</BrowserRouter>
 
-function App(){
-  return(
-    <>
-      <Header/>
-
-      <Routes>
-        <Route path="/" element={<Home/>} />
-        <Route path="/ponies" element={<PonyList/>} />
-        <Route path="/ponies/:id" element={<PonyDetail/>} />
-      </Routes>
-
-      <Footer />
-    </>
-  )
+  );
 }
 
-export default App
+export default App;
